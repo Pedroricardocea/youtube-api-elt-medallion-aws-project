@@ -1,6 +1,6 @@
 # Lambda: JSON → Parquet (YouTube category reference)
 
-Converts the raw **YouTube API category JSON** files in the **raw** S3 bucket into **Parquet** in the **cleaned** bucket, and (optionally) updates the Glue Data Catalog.
+Converts the raw **YouTube API category JSON** files in the **raw** S3 bucket into **Parquet** in the **cleaned** bucket, and updates the Glue Data Catalog.
 
 - Function name (example): `personal-raw-useast2-884576820425-dev-lambda-json-parquet`
 - Runtime: **Python 3.10**
@@ -46,5 +46,5 @@ This provides `awswrangler` (AWS SDK for Pandas) for reading/writing to S3/Glue/
 
 ## Local/Test Invocation
 
-A ready-to-use test event is included as **`s3_put.json`** (place it next to this README or under `tests/`).
+A ready-to-use test event is included as **`s3_put.json`**.
 It simulates an S3 *ObjectCreated* event for a single JSON key.
