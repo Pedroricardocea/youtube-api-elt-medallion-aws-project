@@ -7,8 +7,7 @@ Event-driven ELT pipeline that ingests YouTube Data API results into S3 (Bronze)
 > Mermaid renders natively on GitHub. The source is also in [`diagrams/architecture.mmd`](diagrams/architecture.mmd).
 
 ```mermaid
-<!-- paste kept in sync with diagrams/architecture.mmd -->
-{{---
+---
 config:
   layout: elk
   theme: base
@@ -127,5 +126,5 @@ class ANALYTICS analytics;
 class S3EVT_RAW,S3EVT_CLEAN event;
 
 linkStyle default stroke:#9E9E9E,stroke-width:1.2px,opacity:0.9;
-}}
+
 
