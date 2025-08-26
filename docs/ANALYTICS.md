@@ -2,7 +2,7 @@
 
 ## QuickSight
 
-- ![visualization](./results/QuickSight_visualization.pdf)
+- ![visualization](./results/QuickSight_visualization.png)
 
 ## Athena
 - Database(s): `youtube_api_cleaned`, `dl_analytics`
