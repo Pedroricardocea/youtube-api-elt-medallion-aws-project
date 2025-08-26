@@ -5,7 +5,7 @@ glue = boto3.client("glue")
 CRAWLER = os.environ["CSV_CLEAN_CRAWLER_NAME"]
 JOB = os.environ["ANALYTICS_JOB_RUN"]
 
-# tweakable (or make env vars if you want)
+# tweakable 
 POLL_SECS = 15  # how often to check
 TIMEOUT_SECS = 20 * 60  # max wait 20 min
 
