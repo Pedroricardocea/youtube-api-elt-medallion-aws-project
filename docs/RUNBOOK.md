@@ -51,11 +51,8 @@
 ![Env vars for raw orchestration](./screenshots/raw_lambda_config.png)  
 ![CloudWatch log for a successful raw run](./screenshots/raw_lambda_ingestion_logs.png)  
 ![Raw JSON crawler job detail page](./screenshots/glue_crawler_raw_json_run.png)
-
 ![Raw CSV crawler job detail page](./screenshots/glue_crawler_raw_csv_run.png)
-
 ![CSV→Parquet Glue job run detail](./screenshots/glue_job_csv_to_parquet_run.png)
-
 ![Parquet files visible in Silver](./screenshots/silver_parquet.png) 
 
 ## Cleaned Orchestration
@@ -63,9 +60,7 @@
 ![Env vars for cleaned orchestration](./screenshots/cleaned_lambda_config.png)  
 ![CloudWatch log for a successful clean run](./screenshots/cleaned_lambda_ingestion_logs.png)  
 ![Cleaned Parquet crawler run page](./screenshots/glue_crawler_cleaned_run.png)
-
 ![Analytics join job run page](./screenshots/glue_job_analytics_join_run.png)
-
 ![Gold files visible](./screenshots/gold_parquet.png)
 
 ## Analytics
