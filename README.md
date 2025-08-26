@@ -1,6 +1,6 @@
 # YouTube ELT on AWS (Bronze → Silver → Gold)
 
-Event-driven ELT pipeline that ingests YouTube Data API results into **S3 Bronze**, transforms to **Silver (Parquet)**, joins curated analytics to **Gold**, catalogs with **AWS Glue**, and analyzes with **Athena/QuickSight**.
+This repository contains my Event-driven ELT pipeline that ingests YouTube Data API results into **S3 Bronze**, transforms to **Silver (Parquet)**, joins curated analytics to **Gold**, catalogs with **AWS Glue**, and analyzes with **Athena/QuickSight**.
 
 ## Architecture
 
