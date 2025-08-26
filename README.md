@@ -4,7 +4,7 @@ Event-driven ELT pipeline that ingests YouTube Data API results into **S3 Bronze
 
 ## Architecture
 
-![Architecture](diagrams/architecture.png)
+![Architecture](diagrams/arquitecture_image.png)
 
 > Source Mermaid is in `diagrams/architecture.mmd` (PNG shown here because native Mermaid can render box layouts inconsistently on GitHub).
 
