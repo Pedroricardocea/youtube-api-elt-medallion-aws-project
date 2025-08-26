@@ -2,11 +2,11 @@
 
 ## QuickSight
 
-- [visualization](./results/QuickSight_visualization.pdf)
+- ![visualization](./results/QuickSight_visualization.pdf)
 
 ## Athena
 - Database(s): `youtube_api_cleaned`, `dl_analytics`
-- Example query ![results](./results/athena_query.csv):
+- Example query [results](./results/athena_query.csv):
 ```sql
 SELECT region, ts , snippet_title, COUNT(*) AS videos, SUM(view_count) AS views
 FROM youtube_api_analytics.final_analytics
