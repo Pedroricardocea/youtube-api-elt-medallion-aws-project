@@ -1,7 +1,10 @@
 # Analytics Views (Athena & QuickSight)
 
+## QuickSight
+
+- [visualization](./results/QuickSight_visualization.pdf)
+
 ## Athena
-- Workgroup: `<your-workgroup>`
 - Database(s): `youtube_api_cleaned`, `dl_analytics`
 - Example query ![results](./results/athena_query.csv):
 ```sql

@@ -26,7 +26,7 @@
 
 ## 4) Analytics
 - Query **Gold** with Athena (typically partitioned by `region`, `ts`; `category_id` is used for joins/filters).
-- Optional: build a **QuickSight** dashboard over the joined dataset.  
+- **QuickSight** dashboard over the joined dataset.  
   See: `docs/ANALYTICS.md`
 
 ## Ops & Logs
@@ -63,7 +63,7 @@
 - [Gold files visible](./screenshots/gold_parquet.png)
 
 ## Analytics
-- Athena sample query & results: see `docs/ANALYTICS.md`
+- AWS QuickSight & Athena sample query & results: see `docs/ANALYTICS.md`
 
 ---
 
