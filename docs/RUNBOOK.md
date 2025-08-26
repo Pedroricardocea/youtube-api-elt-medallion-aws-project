@@ -39,29 +39,28 @@
 # More Information
 
 ## EventBridge & Ingestion
-
-[Rule showing 5:00 AM CT schedule](./screenshots/eventbridge_rule.png)  
-[Env vars for data ingestion](./screenshots/lambda_ingestion_config.png)  
-[CloudWatch log for a successful run](./screenshots/lambda_ingestion_logs.png)  
-[Bronze json populated](./screenshots/bronze_json.png)  
-[Bronze csv populated](./screenshots/bronze_csv.png)
+- [Rule showing 5:00 AM CT schedule](./screenshots/eventbridge_rule.png)
+- [Env vars for data ingestion](./screenshots/lambda_ingestion_config.png)
+- [CloudWatch log for a successful run](./screenshots/lambda_ingestion_logs.png)
+- [Bronze json populated](./screenshots/bronze_json.png)
+- [Bronze csv populated](./screenshots/bronze_csv.png)
 
 ## Raw Orchestration
-[S3 raw event notification configurationn](./screenshots/raw_bucket_trigger.png)  
-[Env vars for raw orchestration](./screenshots/raw_lambda_config.png)  
-[CloudWatch log for a successful raw run](./screenshots/raw_lambda_ingestion_logs.png)  
-[Raw JSON crawler job detail page](./screenshots/glue_crawler_raw_json_run.png)
-[Raw CSV crawler job detail page](./screenshots/glue_crawler_raw_csv_run.png)
-[CSV→Parquet Glue job run detail](./screenshots/glue_job_csv_to_parquet_run.png)
-[Parquet files visible in Silver](./screenshots/silver_parquet.png) 
+- [S3 raw event notification configuration](./screenshots/raw_bucket_trigger.png)
+- [Env vars for raw orchestration](./screenshots/raw_lambda_config.png)
+- [CloudWatch log for a successful raw run](./screenshots/raw_lambda_ingestion_logs.png)
+- [Raw JSON crawler job detail page](./screenshots/glue_crawler_raw_json_run.png)
+- [Raw CSV crawler job detail page](./screenshots/glue_crawler_raw_csv_run.png)
+- [CSV→Parquet Glue job run detail](./screenshots/glue_job_csv_to_parquet_run.png)
+- [Parquet files visible in Silver](./screenshots/silver_parquet.png)
 
 ## Cleaned Orchestration
-[S3 cleaned event notification configuration](./screenshots/cleaned_bucket_trigger.png)  
-[Env vars for cleaned orchestration](./screenshots/cleaned_lambda_config.png)  
-[CloudWatch log for a successful clean run](./screenshots/cleaned_lambda_ingestion_logs.png)  
-[Cleaned Parquet crawler run page](./screenshots/glue_crawler_cleaned_run.png)
-[Analytics join job run page](./screenshots/glue_job_analytics_join_run.png)
-[Gold files visible](./screenshots/gold_parquet.png)
+- [S3 cleaned event notification configuration](./screenshots/cleaned_bucket_trigger.png)
+- [Env vars for cleaned orchestration](./screenshots/cleaned_lambda_config.png)
+- [CloudWatch log for a successful clean run](./screenshots/cleaned_lambda_ingestion_logs.png)
+- [Cleaned Parquet crawler run page](./screenshots/glue_crawler_cleaned_run.png)
+- [Analytics join job run page](./screenshots/glue_job_analytics_join_run.png)
+- [Gold files visible](./screenshots/gold_parquet.png)
 
 ## Analytics
 - Athena sample query & results: see `docs/ANALYTICS.md`
