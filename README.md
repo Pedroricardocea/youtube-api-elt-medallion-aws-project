@@ -1,130 +1,103 @@
 # YouTube ELT on AWS (Bronze → Silver → Gold)
 
-Event-driven ELT pipeline that ingests YouTube Data API results into S3 (Bronze), transforms to Parquet (Silver), joins curated analytics (Gold), catalogs with Glue, and visualizes with Athena/QuickSight.
+Event-driven ELT pipeline that ingests YouTube Data API results into **S3 Bronze**, transforms to **Silver (Parquet)**, joins curated analytics to **Gold**, catalogs with **AWS Glue**, and analyzes with **Athena/QuickSight**.
 
 ## Architecture
 
-> Mermaid renders natively on GitHub. The source is also in [`diagrams/architecture.mmd`](diagrams/architecture.mmd).
+![Architecture](diagrams/architecture.png)
 
-```mermaid
+> Source Mermaid is in `diagrams/architecture.mmd` (PNG shown here because native Mermaid can render box layouts inconsistently on GitHub).
+
 ---
-config:
-  layout: elk
-  theme: base
+
+## Background & choices (cost, credits, cloud parity)
+
+I built this on **AWS**. I considered other services, but I wanted to stay on **budget** and I had **AWS credits**, so it made sense to ship here. Bonus: it gave me hands-on time in another cloud beyond my **GCP** experience. The main lesson—patterns are very similar across clouds; names change, not the ideas.
+
+This project focuses on a clear, event-driven **data lake**. If budget allowed, I’d explore **Step Functions** for orchestration, **Amazon MWAA (Airflow)** for DAGs, and **SageMaker** for ML exploration. On the GCP side I only used the **YouTube Data API** client for ingestion.
+
 ---
-flowchart LR
-%% ─────────────────────────── LAYOUT OVERVIEW ───────────────────────────
-subgraph DataLake["🪣 Data Lake"]
-  BRONZE["BRONZE<br/>personal-raw-…-youtubeapi"]
-  SILVER["SILVER<br/>personal-cleaned-…-youtubeapi"]
-  GOLD["GOLD<br/>personal-analytics-…-youtubeapi"]
-end
 
-subgraph DataCatalog["📚: Data Catalog (Glue)"]
-  subgraph BRONZEDB["DB: dl_raw"]
-    BRONZETABLEJSON["Table: raw_statistics_reference_data"]
-    BRONZETABLECSV["Table: raw_statistics"]
-  end
-  subgraph SILVERDB["DB: dl_cleaned"]
-    SILVERTABLEJSON["Table: cleaned_statistics_reference_data"]
-    SILVERTABLECSV["Table: cleaned_statistics"]
-  end
-  subgraph GOLDDB["DB: dl_analytics"]
-    GOLDTABLE["Table: final_analytics"]
-  end
-end
+## What’s in this repo
 
-subgraph Ingestion["⚡ Ingestion"]
-  TRIGGER1["⏰ EventBridge<br/>5:00 AM CT"]
-  API["🧩 YouTube Data API v3"]
-  FUNCTION1["λ youtube_api_fetch_raw"]
-end
+- `diagrams/architecture.png` — the image embedded above  
+- `diagrams/architecture.mmd` — Mermaid source (optional reference)  
+- `docs/RUNBOOK.md` — exact execution order (ingest → raw orchestration → cleaned orchestration → analytics)  
+- `docs/BUCKETS.md` — Bronze/Silver/Gold paths and partitioning  
+- `docs/DATA_CATALOG.md` — Glue DBs, tables, crawlers, and jobs  
+- `docs/ANALYTICS.md` — Athena query examples + (optional) QuickSight notes  
+- `src/` — Lambda & Glue job Python code
+- `screenshots/` — evidence from the AWS console (filenames referenced below)
 
-subgraph PROCESSING["🛠️ Processing"]
-  %% RAW ORCHESTRATOR
-  subgraph RAW_ORCH["λ Raw Orchestrator"]
-    LAMBDA2["json_to_parquet<br/>+ start_csv_to_parquet"]
-    RAW_LAMBDA_FUNCTION["Function: Transform JSON"]
-    subgraph RAW_JOBS["🧪 Glue Jobs (Raw)"]
-      JOB_CSV_PARQ["CSV → Parquet"]
-    end
-    subgraph RAW_CRAWLERS["🕷️ Crawlers (Raw)"]
-      CRAWL_RAW_JSON["Crawler: Raw JSON"]
-      CRAWL_RAW_CSV["Crawler: Raw CSV"]
-    end
-  end
+---
 
-  %% CLEAN ORCHESTRATOR
-  subgraph CLEAN_ORCH["λ Cleaned Orchestrator"]
-    LAMBDA3["catalog_cleaned<br/>+ run_analytics_join"]
-    subgraph CLEAN_JOBS["🧪 Glue Jobs (Cleaned)"]
-      JOB_JOIN["Analytics join on category_id"]
-    end
-    subgraph CLEAN_CRAWLERS["🕷️ Crawler (Cleaned)"]
-      CRAWL_CLEAN["Crawler: Cleaned Parquet"]
-    end
-  end
-end
+## Execution flow (TL;DR)
 
-ANALYTICS["🔎 Athena / QuickSight"]
+1. **Ingestion (EventBridge → Lambda)** `youtube_api_fetch_raw` @ **5:00 AM CT**  
+   Writes JSON metadata and CSV metrics to **Bronze**.
+2. **Raw Orchestration (S3 → Lambda)** `raw_json_parquet_orchestrator`  
+   Triggers crawlers; runs **CSV→Parquet** Glue job; flattens JSON → **Silver**.
+3. **Cleaned Orchestration (S3 → Lambda)** `cleaned_parquet_orchestrator`  
+   Refreshes catalog; runs **Analytics Join** Glue job → **Gold**.
+4. **Analytics**  
+   Query in **Athena**; optional **QuickSight** dashboard.  
+   → Full details in `docs/RUNBOOK.md`.
 
-%% ─────────────────────────── EVENT TRIGGERS ───────────────────────────
-S3EVT_RAW["🔔 S3 Event (BRONZE)<br/>ObjectCreated:* (e.g., *.json, *.csv)"]
-S3EVT_CLEAN["🔔 S3 Event (SILVER)<br/>ObjectCreated:* (e.g., *.parquet)"]
+---
 
-%% ─────────────────────────── FLOWS ───────────────────────────
-TRIGGER1 -- "schedule" --> FUNCTION1
-FUNCTION1 --> API
-FUNCTION1 --> BRONZE
+## Screenshots (evidence)
 
-%% Raw pipeline (event-driven)
-BRONZE -- "S3 notification" --> S3EVT_RAW
-S3EVT_RAW -. "trigger" .-> LAMBDA2
-LAMBDA2 --> RAW_LAMBDA_FUNCTION
-RAW_LAMBDA_FUNCTION --> SILVER
-LAMBDA2 --> JOB_CSV_PARQ
-LAMBDA2 --> CRAWL_RAW_JSON
-LAMBDA2 --> CRAWL_RAW_CSV
+Keep these names exactly (add more if you like):
 
-CRAWL_RAW_JSON --> BRONZETABLEJSON
-CRAWL_RAW_CSV --> BRONZETABLECSV
-JOB_CSV_PARQ --> SILVER
+- `screenshots/eventbridge_rule.png` — 5:00 AM CT schedule  
+- `screenshots/lambda_ingestion_config.png` — env vars for ingestion  
+- `screenshots/lambda_ingestion_logs.png` — CloudWatch success logs  
+- `screenshots/bronze_json.png` — Bronze JSON prefix populated  
+- `screenshots/bronze_csv.png` — Bronze CSV prefix populated  
 
-%% Cleaned / analytics pipeline (event-driven)
-SILVER -- "S3 notification" --> S3EVT_CLEAN
-S3EVT_CLEAN -. "trigger" .-> LAMBDA3
-LAMBDA3 --> CRAWL_CLEAN
-LAMBDA3 --> JOB_JOIN
+- `screenshots/raw_bucket_trigger.png` — S3 raw event notification  
+- `screenshots/raw_lambda_config.png` — raw orchestrator config  
+- `screenshots/raw_lambda_ingestion_logs.png` — raw orchestrator logs  
+- `screenshots/glue_crawler_raw_json_run.png` - raw JSON crawler job detail page
+- `screenshots/glue_crawler_raw_csv_run.png` - raw CSV crawler job detail page
+- `screenshots/glue_job_csv_to_parquet_run.png` - raw CSV to parquet Glue job run detail page
+- `screenshots/silver_parquet.png` — Silver Parquet visible  
 
-RAW_LAMBDA_FUNCTION --> SILVERTABLEJSON
-CRAWL_CLEAN --> SILVERTABLECSV
-JOB_JOIN --> GOLD
+- `screenshots/cleaned_bucket_trigger.png` — S3 cleaned event notification  
+- `screenshots/cleaned_lambda_config.png` — cleaned orchestrator config  
+- `screenshots/cleaned_lambda_ingestion_logs.png` — cleaned orchestrator logs  
+- `screenshots/glue_crawler_cleaned_run.png` - cleaned Parquet crawler job detail page
+- `screenshots/glue_job_analytics_join_run.png` - Analytics join Glue job run detail page
+- `screenshots/gold_parquet.png` — Gold output visible  
 
-%% Catalog & consumption
-GOLD --> GOLDDB
-GOLDTABLE --> ANALYTICS
+- `screenshots/athena_query.png` — sample Athena query/results  
+- `screenshots/quicksight_dashboard.png` — (optional) QuickSight dashboard
 
-%% ─────────────────────────── STYLES ───────────────────────────
-classDef lake fill:#E3F2FD,stroke:#90CAF9,stroke-width:1px,color:#0D47A1;
-classDef catalog fill:#FFF8E1,stroke:#FFECB3,stroke-width:1px,color:#5D4037;
-classDef db fill:#FFF9C4,stroke:#FDD835,color:#5D4037;
-classDef lambda fill:#FFCDD2,stroke:#EF9A9A,color:#B71C1C;
-classDef jobs fill:#E1BEE7,stroke:#CE93D8,color:#4A148C;
-classDef crawler fill:#EDE7F6,stroke:#D1C4E9,color:#311B92;
-classDef ext fill:#F1F8E9,stroke:#C5E1A5,color:#33691E;
-classDef analytics fill:#E0F7FA,stroke:#80DEEA,color:#006064;
-classDef event fill:#FFF3E0,stroke:#FFCC80,color:#E65100;
+---
 
-class DataLake lake;
-class DataCatalog catalog;
-class BRONZEDB,SILVERDB,GOLDDB db;
-class Ingestion,RAW_ORCH,CLEAN_ORCH lambda;
-class RAW_JOBS,CLEAN_JOBS jobs;
-class RAW_CRAWLERS,CLEAN_CRAWLERS crawler;
-class API ext;
-class ANALYTICS analytics;
-class S3EVT_RAW,S3EVT_CLEAN event;
+## IAM (roles used — summary)
 
-linkStyle default stroke:#9E9E9E,stroke-width:1.2px,opacity:0.9;
+> For production, prefer **roles** with least privilege over long-lived users.
 
+- **Lambda execution — `youtube_api_fetch_raw`**  
+  S3 write to Bronze; CloudWatch Logs.
+- **Lambda execution — `raw_json_parquet_orchestrator`**  
+  Glue `StartCrawler/StartJobRun/Get*`; S3 read Bronze / write Silver; CloudWatch Logs.
+- **Lambda execution — `cleaned_parquet_orchestrator`**  
+  Glue `StartCrawler/StartJobRun/Get*`; S3 read Silver / write Gold; CloudWatch Logs.
+- **Glue job role — `csv_to_parquet`**  
+  S3 read Bronze CSV; S3 write Silver Parquet; Logs; access to `aws-glue-assets-…`.
+- **Glue job role — `analytics_join`**  
+  S3 read Silver; S3 write Gold; Logs; 
+- **Glue crawler role(s)**  
+  S3 `List/Get` on scanned prefixes; Glue Catalog read/write on relevant DBs/tables.
+
+---
+
+## Quick links
+
+- **Runbook:** `docs/RUNBOOK.md`  
+- **Buckets & paths:** `docs/BUCKETS.md`  
+- **Glue catalog:** `docs/DATA_CATALOG.md`  
+- **Analytics (Athena + QuickSight):** `docs/ANALYTICS.md`
 
