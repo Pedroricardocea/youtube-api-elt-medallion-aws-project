@@ -27,7 +27,8 @@ This project focuses on a clear, event-driven **data lake**. If budget allowed, 
 - `docs/DATA_CATALOG.md` — Glue DBs, tables, crawlers, and jobs  
 - `docs/ANALYTICS.md` — Athena query examples + (optional) QuickSight notes  
 - `src/` — Lambda & Glue job Python code
-- `screenshots/` — evidence from the AWS console (filenames referenced below)
+- `docs/results/` — final sample AWS Athena query and AWS QuickSight files
+- `docs/screenshots/` — evidence from the AWS console (filenames referenced below)
 
 ---
 
@@ -40,7 +41,7 @@ This project focuses on a clear, event-driven **data lake**. If budget allowed, 
 3. **Cleaned Orchestration (S3 → Lambda)** `cleaned_parquet_orchestrator`  
    Refreshes catalog; runs **Analytics Join** Glue job → **Gold**.
 4. **Analytics**  
-   Query in **Athena**; optional **QuickSight** dashboard.  
+   Query in **Athena**; **QuickSight** dashboard.  
    → Full details in `docs/RUNBOOK.md`.
 
 ---
@@ -69,9 +70,6 @@ Keep these names exactly (add more if you like):
 - `screenshots/glue_crawler_cleaned_run.png` - cleaned Parquet crawler job detail page
 - `screenshots/glue_job_analytics_join_run.png` - Analytics join Glue job run detail page
 - `screenshots/gold_parquet.png` — Gold output visible  
-
-- `screenshots/athena_query.png` — sample Athena query/results  
-- `screenshots/quicksight_dashboard.png` — (optional) QuickSight dashboard
 
 ---
 
