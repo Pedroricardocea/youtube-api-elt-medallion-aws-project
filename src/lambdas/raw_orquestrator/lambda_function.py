@@ -19,7 +19,7 @@ os_input_glue_catalog_db_name = os.environ["glue_catalog_db_name"]
 os_input_glue_catalog_table_name = os.environ["glue_catalog_table_name"]
 os_input_write_data_operation = os.environ[
     "write_data_operation"
-]  # valid values: insert, upsert, update
+]  
 
 
 def lambda_handler(event, context):
