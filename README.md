@@ -96,8 +96,8 @@ Keep these names exactly (add more if you like):
 
 ## Quick links
 
-- **Runbook:** `docs/RUNBOOK.md`  
-- **Buckets & paths:** `docs/BUCKETS.md`  
-- **Glue catalog:** `docs/DATA_CATALOG.md`  
-- **Analytics (Athena + QuickSight):** `docs/ANALYTICS.md`
+- [Runbook (execution order)](docs/RUNBOOK.md)
+- [Buckets & paths](docs/BUCKETS.md)
+- [Glue Data Catalog](docs/DATA_CATALOG.md)
+- [Analytics (Athena + QuickSight)](docs/ANALYTICS.md)
 
